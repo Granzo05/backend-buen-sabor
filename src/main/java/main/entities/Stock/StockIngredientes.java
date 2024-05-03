@@ -26,14 +26,10 @@ public class StockIngredientes extends Stock {
     @OneToOne
     @JoinColumn(name = "id_ingrediente")
     private Ingrediente ingrediente;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_sucursal")
-    private Sucursal sucursal;
 
     public StockIngredientes(int cantidadActual, int cantidadMinima, int cantidadMaxima, Sucursal sucursal, Ingrediente ingrediente, EnumMedida medida, double precioCompra) {
-        super(precioCompra, cantidadActual, cantidadMinima, cantidadMaxima, medida);
+        super(precioCompra, cantidadActual, cantidadMinima, cantidadMaxima, medida, sucursal);
         this.ingrediente = ingrediente;
-        this.sucursal = sucursal;
     }
 
 }

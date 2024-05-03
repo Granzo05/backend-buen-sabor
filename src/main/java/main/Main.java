@@ -1,9 +1,7 @@
 package main;
 
 import main.entities.Cliente.Cliente;
-import main.entities.Domicilio.Domicilio;
-import main.entities.Domicilio.Localidad;
-import main.entities.Domicilio.Provincia;
+import main.entities.Domicilio.*;
 import main.entities.Factura.EnumMetodoPago;
 import main.entities.Factura.EnumTipoFactura;
 import main.entities.Factura.Factura;
@@ -16,8 +14,9 @@ import main.entities.Restaurante.Empleado;
 import main.entities.Restaurante.Empresa;
 import main.entities.Restaurante.FechaContratacionEmpleado;
 import main.entities.Restaurante.Sucursal;
-import main.entities.Stock.FechaStock;
+import main.entities.Stock.DetalleStock;
 import main.entities.Stock.StockArticuloVenta;
+import main.entities.Stock.StockEntrante;
 import main.entities.Stock.StockIngredientes;
 import main.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +55,7 @@ public class Main {
     private ArticuloMenuRepository articuloMenuRepository;
 
     @Autowired
-    private ImagenRepository imagenRepository;
+    private ImagenesProductoRepository imagenesProductoRepository;
 
     @Autowired
     private PromocionRepository promocionRepository;
@@ -68,7 +67,7 @@ public class Main {
     private PedidoRepository pedidoRepository;
 
     @Autowired
-    private DetalleRepository detalleRepository;
+    private DetallePedidoRepository detallePedidoRepository;
 
     @Autowired
     private EmpleadoRepository empleadoRepository;
@@ -77,7 +76,16 @@ public class Main {
     private FacturaRepository facturaRepository;
 
     @Autowired
-    private FechaStockRepository fechaStockRepository;
+    private DetalleStockRepository detalleStockRepository;
+
+    @Autowired
+    private StockEntranteRepository stockEntranteRepository;
+
+    @Autowired
+    private PaisRepository paisRepository;
+
+    @Autowired
+    private DepartamentoRepository departamentoRepository;
 
 
     public static void main(String[] args) {
@@ -89,21 +97,52 @@ public class Main {
     CommandLineRunner init() {
         return args -> {
             try {
+
+                Pais pais = new Pais();
+                pais.setNombre("Argentina");
+
                 Provincia provincia1 = new Provincia();
                 provincia1.setNombre("Mendoza");
 
+                Departamento departamento = new Departamento();
+                departamento.setProvincia(provincia1);
+                departamento.setNombre("Godoy Cruz");
+
                 Localidad localidad1 = new Localidad();
-                localidad1.setNombre("Luján de Cuyo");
-                localidad1.setProvincia(provincia1);
+                localidad1.setNombre("Villa Hipodromo");
 
                 Localidad localidad2 = new Localidad();
-                localidad2.setNombre("Godoy Cruz");
-                localidad2.setProvincia(provincia1);
+                localidad2.setNombre("Las Tortugas");
 
-                provincia1.getLocalidades().add(localidad1);
-                provincia1.getLocalidades().add(localidad2);
+                Departamento departamento1 = new Departamento();
+                departamento1.setProvincia(provincia1);
+                departamento1.setNombre("Luján de Cuyo");
 
-                provinciaRepository.save(provincia1);
+                Localidad localidad3 = new Localidad();
+                localidad3.setNombre("Las Compuertas");
+
+                Localidad localidad4 = new Localidad();
+                localidad4.setNombre("Chacras");
+
+                localidad1.setDepartamento(departamento);
+                localidad2.setDepartamento(departamento);
+                localidad3.setDepartamento(departamento1);
+                localidad4.setDepartamento(departamento1);
+
+                departamento.getLocalidades().add(localidad1);
+                departamento.getLocalidades().add(localidad2);
+
+                departamento1.getLocalidades().add(localidad3);
+                departamento1.getLocalidades().add(localidad4);
+
+                provincia1.getDepartamentos().add(departamento);
+                provincia1.getDepartamentos().add(departamento1);
+
+                provincia1.setPais(pais);
+
+                pais.getProvincias().add(provincia1);
+
+                paisRepository.save(pais);
 
                 Empresa buenSabor = new Empresa();
                 buenSabor.setCuit(30555222);
@@ -120,6 +159,8 @@ public class Main {
                 sucursalChacras.setPrivilegios("negocio");
                 sucursalChacras.setTelefono(2613856699l);
                 sucursalChacras.setEmpresa(buenSabor);
+                sucursalChacras.getLocalidadesDisponiblesDelivery().add(localidad3);
+                sucursalChacras.getLocalidadesDisponiblesDelivery().add(localidad4);
 
                 sucursalChacras = sucursalRepository.save(sucursalChacras);
 
@@ -148,7 +189,7 @@ public class Main {
                 sucursalGodoyCruz.setPrivilegios("negocio");
                 sucursalGodoyCruz.setTelefono(261344119l);
                 sucursalGodoyCruz.setEmpresa(buenSabor);
-
+                sucursalGodoyCruz.getLocalidadesDisponiblesDelivery().add(localidad1);
 
                 sucursalGodoyCruz = sucursalRepository.save(sucursalGodoyCruz);
 
@@ -221,14 +262,39 @@ public class Main {
                 ingredienteRepository.save(queso);
                 ingredienteRepository.save(tomate);
 
-                FechaStock fechaStock = FechaStock.builder()
-                        .stockIngredientes(stockTomate)
-                        .fecha(new Date(2024 - 1900, 6, 25))
-                        .cantidadLlegada(20)
-                        .medida(EnumMedida.KILOGRAMOS)
+
+                DetalleStock detalleStock = DetalleStock.builder()
+                        .articuloVenta(cocaCola)
+                        .cantidad(40)
+                        .medida(EnumMedida.UNIDADES)
+                        .subTotal(40000)
                         .build();
 
-                fechaStockRepository.save(fechaStock);
+                DetalleStock detalleStock1 = DetalleStock.builder()
+                        .ingrediente(tomate)
+                        .cantidad(10)
+                        .medida(EnumMedida.KILOGRAMOS)
+                        .subTotal(7000)
+                        .build();
+
+                StockEntrante stockEntrante = new StockEntrante();
+                stockEntrante.setSucursal(sucursalGodoyCruz);
+                stockEntrante.setFechaLlegada(new Date(2024 - 1900, 6, 25));
+
+                stockEntrante.getDetallesStock().add(detalleStock);
+                stockEntrante.getDetallesStock().add(detalleStock1);
+
+                for (DetalleStock detalle: stockEntrante.getDetallesStock()) {
+                    stockEntrante.setTotal(stockEntrante.getTotal() + detalle.getSubTotal());
+                }
+
+                stockEntrante = stockEntranteRepository.save(stockEntrante);
+
+                detalleStock1.setStockEntrante(stockEntrante);
+                detalleStock.setStockEntrante(stockEntrante);
+
+                detalleStockRepository.save(detalleStock1);
+                detalleStockRepository.save(detalleStock);
 
                 ArticuloMenu pizzaMuzza = new ArticuloMenu();
                 pizzaMuzza.setNombre("Pizza muzzarella");
@@ -301,9 +367,9 @@ public class Main {
                 DetallesPedido detalle2 = new DetallesPedido(1, pizzaNapolitana.getPrecioVenta() * 1, pizzaNapolitana, pedido);
                 DetallesPedido detalle3 = new DetallesPedido(1, cocaCola.getPrecioVenta() * 1, cocaCola, pedido);
 
-                detalleRepository.save(detalle1);
-                detalleRepository.save(detalle2);
-                detalleRepository.save(detalle3);
+                detallePedidoRepository.save(detalle1);
+                detallePedidoRepository.save(detalle2);
+                detallePedidoRepository.save(detalle3);
 
                 Factura factura = Factura.builder()
                         .tipoFactura(EnumTipoFactura.B)

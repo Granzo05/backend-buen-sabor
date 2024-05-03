@@ -22,5 +22,8 @@ public class Provincia {
     @Column(name = "nombre")
     private String nombre;
     @OneToMany(mappedBy = "provincia", cascade = CascadeType.ALL)
-    private Set<Localidad> localidades = new HashSet<>();
+    private Set<Departamento> departamentos = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_pais")
+    private Pais pais;
 }

@@ -6,8 +6,8 @@ import main.entities.Ingredientes.IngredienteMenu;
 import main.entities.Productos.ArticuloMenu;
 import main.entities.Restaurante.Sucursal;
 import main.entities.Stock.StockIngredientes;
+import main.repositories.ArticuloMenuRepository;
 import main.repositories.IngredienteRepository;
-import main.repositories.MenuRepository;
 import main.repositories.StockIngredientesRepository;
 import main.repositories.SucursalRepository;
 import org.springframework.http.HttpStatus;
@@ -22,13 +22,13 @@ import java.util.Set;
 public class StockIngredientesController {
     private final StockIngredientesRepository stockIngredientesRepository;
     private final IngredienteRepository ingredienteRepository;
-    private final MenuRepository menuRepository;
+    private final ArticuloMenuRepository articuloMenuRepository;
     private final SucursalRepository sucursalRepository;
 
-    public StockIngredientesController(StockIngredientesRepository stockIngredientesRepository, IngredienteRepository ingredienteRepository, MenuRepository menuRepository, SucursalRepository sucursalRepository) {
+    public StockIngredientesController(StockIngredientesRepository stockIngredientesRepository, IngredienteRepository ingredienteRepository, ArticuloMenuRepository articuloMenuRepository, SucursalRepository sucursalRepository) {
         this.stockIngredientesRepository = stockIngredientesRepository;
         this.ingredienteRepository = ingredienteRepository;
-        this.menuRepository = menuRepository;
+        this.articuloMenuRepository = articuloMenuRepository;
         this.sucursalRepository = sucursalRepository;
     }
 
@@ -46,7 +46,7 @@ public class StockIngredientesController {
     @GetMapping("sucursal/{idSucursal}/stockIngredientes/{nombre}/{cantidad}")
     public ResponseEntity<String> getStockPorNombre(@PathVariable("nombre") String nombre, @PathVariable("cantidad") int cantidad, @PathVariable("idSucursal") long id) {
         // Recibimos el nombre del menu y la cantidad pedida del mismo
-        Optional<ArticuloMenu> menu = menuRepository.findByName(nombre);
+        Optional<ArticuloMenu> menu = articuloMenuRepository.findByName(nombre);
 
         if (!menu.isEmpty()) {
             // Buscamos ingrediente por ingrediente a ver si el stockIngredientes es suficiente

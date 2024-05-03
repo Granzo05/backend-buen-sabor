@@ -31,4 +31,6 @@ public class ArticuloVenta extends Articulo {
     private StockArticuloVenta stock;
     @OneToMany(mappedBy = "articuloVenta", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<ImagenesProducto> imagenes = new HashSet<>();
+    @ManyToMany(mappedBy = "articulosVenta", fetch = FetchType.LAZY)
+    private Set<Promocion> promociones = new HashSet<>();
 }

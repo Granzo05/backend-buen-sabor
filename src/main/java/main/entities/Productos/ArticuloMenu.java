@@ -32,4 +32,6 @@ public class ArticuloMenu extends Articulo {
     private Set<IngredienteMenu> ingredientesMenu = new HashSet<>();
     @OneToMany(mappedBy = "articuloMenu", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<ImagenesProducto> imagenes = new HashSet<>();
+    @ManyToMany(mappedBy = "articulosMenu", fetch = FetchType.LAZY)
+    private Set<Promocion> promociones = new HashSet<>();
 }

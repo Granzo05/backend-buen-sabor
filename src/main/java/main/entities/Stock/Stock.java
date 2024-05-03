@@ -32,12 +32,16 @@ public abstract class Stock {
     @JsonIgnore
     @Column(name = "borrado")
     private String borrado = "NO";
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_sucursal")
+    private Sucursal sucursal;
 
-    public Stock(double precioCompra, int cantidadActual, int cantidadMinima, int cantidadMaxima, EnumMedida medida) {
+    public Stock(double precioCompra, int cantidadActual, int cantidadMinima, int cantidadMaxima, EnumMedida medida, Sucursal sucursal) {
         this.precioCompra = precioCompra;
         this.cantidadActual = cantidadActual;
         this.cantidadMinima = cantidadMinima;
         this.cantidadMaxima = cantidadMaxima;
         this.medida = medida;
+        this.sucursal = sucursal;
     }
 }

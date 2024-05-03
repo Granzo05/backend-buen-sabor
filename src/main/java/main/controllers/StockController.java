@@ -1,12 +1,7 @@
 package main.controllers;
 
-import jakarta.transaction.Transactional;
-import main.entities.Ingredientes.Ingrediente;
 import main.entities.Ingredientes.IngredienteMenu;
 import main.entities.Productos.ArticuloMenu;
-import main.entities.Restaurante.Sucursal;
-import main.entities.Stock.FechaStock;
-import main.entities.Stock.Stock;
 import main.entities.Stock.StockIngredientes;
 import main.repositories.ArticuloMenuRepository;
 import main.repositories.IngredienteRepository;

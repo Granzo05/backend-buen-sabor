@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional;
 import main.entities.Productos.ArticuloVenta;
 import main.entities.Restaurante.Sucursal;
 import main.entities.Stock.StockArticuloVenta;
+import main.repositories.ArticuloMenuRepository;
 import main.repositories.IngredienteRepository;
-import main.repositories.MenuRepository;
 import main.repositories.StockArticuloVentaRepository;
 import main.repositories.SucursalRepository;
 import org.springframework.http.HttpStatus;
@@ -20,13 +20,13 @@ import java.util.Set;
 public class StockArticulosController {
     private final StockArticuloVentaRepository stockArticuloRepository;
     private final IngredienteRepository ingredienteRepository;
-    private final MenuRepository menuRepository;
+    private final ArticuloMenuRepository articuloMenuRepository;
     private final SucursalRepository sucursalRepository;
 
-    public StockArticulosController(StockArticuloVentaRepository stockArticuloRepository, IngredienteRepository ingredienteRepository, MenuRepository menuRepository, SucursalRepository sucursalRepository) {
+    public StockArticulosController(StockArticuloVentaRepository stockArticuloRepository, IngredienteRepository ingredienteRepository, ArticuloMenuRepository articuloMenuRepository, SucursalRepository sucursalRepository) {
         this.stockArticuloRepository = stockArticuloRepository;
         this.ingredienteRepository = ingredienteRepository;
-        this.menuRepository = menuRepository;
+        this.articuloMenuRepository = articuloMenuRepository;
         this.sucursalRepository = sucursalRepository;
     }
 
